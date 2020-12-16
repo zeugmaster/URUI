@@ -2,7 +2,10 @@
 
 ### _by Wolf McNally and Christopher Allen_
 
-**URUI** is a Cross-Apple-Platform UI for displaying and scanning URs
+### _by [Wolf McNally](https://www.github.com/wolfmcnally) and [Christopher Allen](https://www.github.com/ChristopherA)_
+
+* <img src="https://github.com/BlockchainCommons/crypto-commons/blob/master/images/logos/crypto-commons-super-simple.png" width=16 valign="bottom">&nbsp;&nbsp; ***part of the [crypto commons](https://github.com/BlockchainCommons/crypto-commons/blob/master/README.md) technology family***
+
 
 This framework depends on [URKit](https://github.com/blockchaincommons/URKit) and implements SwiftUI interfaces for displaying URs in (possibly animated) QR code form and scanning those same QR codes back into UR form. This framework compiles for iOS devices or Mac Catalyst. Video capture not supported under the iOS simulator.
 
