@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import Dispatch
 
 /// A UIKit view that shows video preview, intended to be wrapped by `URVideo`.
 public class URUIVideoView: UIView {
@@ -31,10 +32,12 @@ public class URUIVideoView: UIView {
 
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        if superview != nil {
-            videoSession.startRunning()
-        } else {
+        if superview == nil {
             videoSession.stopRunning()
+        } else {
+            DispatchQueue.main.async { [unowned self] in
+                self.videoSession.startRunning()
+            }
         }
     }
 
