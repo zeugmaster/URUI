@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "URKit",
+        "repositoryURL": "https://github.com/BlockchainCommons/URKit.git",
+        "state": {
+          "branch": null,
+          "revision": "10389433bafde9b088692224f27a8409eae87b27",
+          "version": "2.3.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
