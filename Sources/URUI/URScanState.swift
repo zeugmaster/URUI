@@ -9,12 +9,18 @@ import SwiftUI
 import URKit
 import Combine
 
+public enum URScanResult {
+    case ur(UR)
+    case other(String)
+    case failure(Error)
+}
+
 /// Tracks and reports state of ongoing capture.
 public final class URScanState: ObservableObject {
     let feedbackProvider: URScanFeedbackProvider?
 
     @Published public var isDone = false
-    @Published public var result: Result<UR, Error>? {
+    @Published public var result: URScanResult? {
         didSet { isDone = result != nil }
     }
     @Published public var fragmentStates: [URFragmentBar.FragmentState]!
@@ -61,7 +67,7 @@ public final class URScanState: ObservableObject {
 
     func receiveCodes(_ parts: Set<String>) {
         // Stop if we're already done with the decode.
-        guard urDecoder.result == nil else { return }
+        guard result == nil else { return }
 
         // Pass the parts we received to the decoder and make
         // a list of the ones it accepted.
@@ -69,19 +75,26 @@ public final class URScanState: ObservableObject {
             urDecoder.receivePart(part)
         }
 
-        // Stop if the decoder didn't accept any parts.
-        guard !acceptedParts.isEmpty else {
-            feedbackProvider?.error()
-            return
+        // If we haven't yet received the start of a multi-part UR
+        // and get some other QR code, then that's our result.
+        if urDecoder.expectedType == nil && acceptedParts.isEmpty {
+            result = .other(parts.first!)
+        } else {
+            switch urDecoder.result {
+            case .failure(let error)?:
+                result = .failure(error)
+            case .success(let ur)?:
+                result = .ur(ur)
+            case nil:
+                break
+            }
         }
-
-        result = urDecoder.result
         syncToResult()
     }
 
     private func syncToResult() {
         switch result {
-        case .success?:
+        case .ur?, .other?:
             fragmentStates = [.highlighted]
             estimatedPercentComplete = 1
             feedbackProvider?.success()
