@@ -48,7 +48,7 @@ struct FragmentBar_Previews: PreviewProvider {
 
     static var previews: some View {
         NavigationView {
-            URFragmentBar(states: Binding.constant(Self.states))
+            URFragmentBar(states: .constant(Self.states))
                 .padding()
         }
         .darkMode()

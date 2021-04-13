@@ -101,7 +101,7 @@ final class VideoSession {
             let codes = Set(metadataObjects.compactMap {
                 ($0 as? AVMetadataMachineReadableCodeObject)?.stringValue
             })
-            if !codes.isEmpty, !codes.isSubset(of: lastFound) {
+            if !codes.isEmpty, codes != lastFound {
                 lastFound = codes
                 codesPublisher.send(codes)
             }

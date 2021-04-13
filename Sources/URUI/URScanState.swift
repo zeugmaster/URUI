@@ -10,42 +10,43 @@ import URKit
 import Combine
 
 public enum URScanResult {
+    /// A UR QR code was read.
     case ur(UR)
+    
+    /// Some other QR code was read.
     case other(String)
+    
+    /// A part of a multi-part QR code was read.
+    case progress(URScanProgress)
+    
+    /// A part of a multi-part QR code was rejected.
+    case reject
+    
+    /// An error occurred that aborted the scan session.
     case failure(Error)
+}
+
+public struct URScanProgress {
+    public let estimatedPercentComplete: Double
+    public let fragmentStates: [URFragmentBar.FragmentState]
 }
 
 /// Tracks and reports state of ongoing capture.
 public final class URScanState: ObservableObject {
-    let feedbackProvider: URScanFeedbackProvider?
-
-    @Published public var isDone = false
-    @Published public var result: URScanResult? {
-        didSet { isDone = result != nil }
-    }
-    @Published public var fragmentStates: [URFragmentBar.FragmentState]!
-    @Published public var estimatedPercentComplete: Double!
+    public let resultPublisher = PassthroughSubject<URScanResult, Never>()
 
     let codesPublisher = CodesPublisher()
 
     private var urDecoder: URDecoder!
     private var bag = Set<AnyCancellable>()
-    private var startDate: Date?
 
-    public var elapsedTime: TimeInterval {
-        guard let startDate = startDate else { return 0 }
-        return Date.timeIntervalSinceReferenceDate - startDate.timeIntervalSinceReferenceDate
-    }
-
-    public init(feedbackProvider: URScanFeedbackProvider? = nil) {
-        self.feedbackProvider = feedbackProvider
-
+    public init() {
         codesPublisher
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
                 case .failure(let error):
-                    self.result = .failure(error)
+                    self.resultPublisher.send(.failure(error))
                 case .finished:
                     break
                 }
@@ -59,61 +60,44 @@ public final class URScanState: ObservableObject {
 
     public func restart() {
         urDecoder = URDecoder()
-        result = nil
-        fragmentStates = [.off]
-        estimatedPercentComplete = 0
-        startDate = nil
     }
-
-    func receiveCodes(_ parts: Set<String>) {
-        // Stop if we're already done with the decode.
-        guard result == nil else { return }
-
-        // Pass the parts we received to the decoder and make
-        // a list of the ones it accepted.
-        let acceptedParts = parts.filter { part in
-            urDecoder.receivePart(part)
+    
+    private var progress: URScanProgress {
+        let estimatedPercentComplete = urDecoder.estimatedPercentComplete
+        let fragmentStates: [URFragmentBar.FragmentState] = (0 ..< urDecoder.expectedPartCount).map { i in
+            if urDecoder.receivedPartIndexes.contains(i) {
+                return .highlighted
+            } else {
+                return urDecoder.lastPartIndexes.contains(i) ? .on : .off
+            }
         }
-
-        // If we haven't yet received the start of a multi-part UR
-        // and get some other QR code, then that's our result.
-        if urDecoder.expectedType == nil && acceptedParts.isEmpty {
-            result = .other(parts.first!)
-        } else {
+        return URScanProgress(estimatedPercentComplete: estimatedPercentComplete, fragmentStates: fragmentStates)
+    }
+    
+    func processCode(_ code: String) {
+        if urDecoder.receivePart(code) {
             switch urDecoder.result {
             case .failure(let error)?:
-                result = .failure(error)
+                resultPublisher.send(.failure(error))
+                restart()
             case .success(let ur)?:
-                result = .ur(ur)
+                resultPublisher.send(.ur(ur))
+                restart()
             case nil:
-                break
+                resultPublisher.send(.progress(progress))
+            }
+        } else {
+            if urDecoder.expectedType == nil {
+                resultPublisher.send(.other(code))
+            } else {
+                resultPublisher.send(.reject)
             }
         }
-        syncToResult()
     }
 
-    private func syncToResult() {
-        switch result {
-        case .ur?, .other?:
-            fragmentStates = [.highlighted]
-            estimatedPercentComplete = 1
-            feedbackProvider?.success()
-        case .failure(let error)?:
-            feedbackProvider?.error()
-            print("🛑 \(error)")
-        case nil:
-            feedbackProvider?.progress()
-            if startDate == nil {
-                startDate = Date()
-            }
-            estimatedPercentComplete = urDecoder.estimatedPercentComplete
-            fragmentStates = (0 ..< urDecoder.expectedPartCount).map { i in
-                if urDecoder.receivedPartIndexes.contains(i) {
-                    return .highlighted
-                } else {
-                    return urDecoder.lastPartIndexes.contains(i) ? .on : .off
-                }
-            }
+    func receiveCodes(_ codes: Set<String>) {
+        for code in codes {
+            processCode(code)
         }
     }
 }

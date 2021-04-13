@@ -35,7 +35,7 @@ public struct URQRCode: View {
 struct QRCode_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            URQRCode(data: Binding.constant("Hello".utf8))
+            URQRCode(data: .constant("Hello".utf8))
         }.darkMode()
     }
 }

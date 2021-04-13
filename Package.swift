@@ -14,7 +14,7 @@ let package = Package(
             targets: ["URUI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/BlockchainCommons/URKit.git", from: "2.0.0"),
+        .package(url: "https://github.com/BlockchainCommons/URKit.git", from: "2.4.0"),
     ],
     targets: [
         .target(

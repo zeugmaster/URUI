@@ -25,7 +25,6 @@ Use of this framework is demonstrated in the [URDemo](https://github.com/blockch
 |:--|:--|:--|
 | URFragmentBar | View | Displays which fragments of a multi-part UR are currently displayed or being captured.
 | URProgressBar | View | Displays a linear progress bar.
-| URScanFeedbackProvider | protocol | Used to add sound effects or haptic feedback to an ongoing capture.
 | URScanState | class | Tracks and reports state of ongoing capture.
 | URVideo | View | Displays video preview and captures QR codes.
 
