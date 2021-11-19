@@ -28,15 +28,14 @@ final class VideoSession {
     private var metadataObjectsDelegate: MetadataObjectsDelegate!
     let queue = DispatchQueue(label: "codes", qos: .userInteractive)
 
-    init(codesPublisher: CodesPublisher) {
+    init?(codesPublisher: CodesPublisher) {
+        #if targetEnvironment(simulator)
+        return nil
+        #else
+
         self.codesPublisher = codesPublisher
 
         do {
-            #if targetEnvironment(simulator)
-
-            throw VideoSessionError("Video capture not available in the simulator.")
-
-            #else
 
             captureSession = AVCaptureSession()
 
@@ -63,11 +62,11 @@ final class VideoSession {
 
             previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
             previewLayer!.videoGravity = .resizeAspectFill
-            #endif
         } catch {
             print("🛑 \(error)")
             codesPublisher.send(completion: .failure(error))
         }
+        #endif
     }
 
     func startRunning() {

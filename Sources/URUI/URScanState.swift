@@ -75,7 +75,7 @@ public final class URScanState: ObservableObject {
     }
     
     func processCode(_ code: String) {
-        if urDecoder.receivePart(code) {
+        if urDecoder.receivePart(code.trim()) {
             switch urDecoder.result {
             case .failure(let error)?:
                 resultPublisher.send(.failure(error))
