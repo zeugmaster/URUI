@@ -8,10 +8,11 @@
 import UIKit
 import AVFoundation
 import Dispatch
+import Combine
 
 /// A UIKit view that shows video preview, intended to be wrapped by `URVideo`.
 public class URUIVideoView: UIView {
-    private let videoSession: VideoSession?
+    let videoSession: VideoSession?
 
     init(codesPublisher: CodesPublisher) {
         videoSession = VideoSession(codesPublisher: codesPublisher)

@@ -21,12 +21,32 @@ struct VideoSessionError: LocalizedError {
     }
 }
 
-final class VideoSession {
+final class VideoSession: ObservableObject {
+    @Published public private(set) var captureDevices: [AVCaptureDevice] = []
+    @Published public private(set) var currentCaptureDevice: AVCaptureDevice?
+
     private(set) var captureSession: AVCaptureSession!
     private(set) var previewLayer: AVCaptureVideoPreviewLayer?
+    private var discoverySession: AVCaptureDevice.DiscoverySession!
     private let codesPublisher: CodesPublisher
     private var metadataObjectsDelegate: MetadataObjectsDelegate!
     let queue = DispatchQueue(label: "codes", qos: .userInteractive)
+    
+    func setCaptureDevice(_ newDevice: AVCaptureDevice) {
+        do {
+            captureSession.beginConfiguration()
+            if let currentInput = captureSession.inputs.first {
+                captureSession.removeInput(currentInput)
+            }
+            let newInput = try AVCaptureDeviceInput(device: newDevice)
+            captureSession.addInput(newInput)
+            
+            captureSession.commitConfiguration()
+            currentCaptureDevice = newDevice
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 
     init?(codesPublisher: CodesPublisher) {
         #if targetEnvironment(simulator)
@@ -36,14 +56,17 @@ final class VideoSession {
         self.codesPublisher = codesPublisher
 
         do {
+            discoverySession = .init(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
+            captureDevices = discoverySession.devices
 
-            captureSession = AVCaptureSession()
-
-            guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
+            guard let currentCaptureDevice = AVCaptureDevice.default(for: .video) else {
                 throw VideoSessionError("Could not open video capture device.")
             }
+            
+            self.currentCaptureDevice = currentCaptureDevice
 
-            let videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
+            let videoInput = try AVCaptureDeviceInput(device: currentCaptureDevice)
+            captureSession = AVCaptureSession()
             guard captureSession.canAddInput(videoInput) else {
                 throw VideoSessionError("Could not add video input device.")
             }
