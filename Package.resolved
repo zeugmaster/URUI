@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/BlockchainCommons/URKit.git",
         "state": {
           "branch": null,
-          "revision": "ee5f3be7cb58bee63cea5183f538f25900dcd2ee",
-          "version": "2.6.0"
+          "revision": "c125790d29d1c94a32966ed59a80f8eb3efad226",
+          "version": "3.0.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/wolfmcnally/WolfBase",
         "state": {
           "branch": null,
-          "revision": "d45e50c0dd7a822dd9c0386416ef6a9eaafefbdf",
-          "version": "1.1.1"
+          "revision": "e2d31011f52152590ec587f09c067c3b9fb064a3",
+          "version": "2.4.1"
         }
       }
     ]
