@@ -12,12 +12,12 @@ import Combine
 
 /// A UIKit view that shows video preview, intended to be wrapped by `URVideo`.
 public class URUIVideoView: UIView {
-    let videoSession: VideoSession?
+    let videoSession: URVideoSession
 
-    init(codesPublisher: CodesPublisher) {
-        videoSession = VideoSession(codesPublisher: codesPublisher)
+    init(videoSession: URVideoSession) {
+        self.videoSession = videoSession
         super.init(frame: .zero)
-        guard let videoSession = videoSession else {
+        guard videoSession.isSupported else {
             return
         }
         translatesAutoresizingMaskIntoConstraints = false
@@ -36,21 +36,21 @@ public class URUIVideoView: UIView {
 
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard let videoSession = videoSession else {
+        guard videoSession.isSupported else {
             return
         }
         if superview == nil {
             videoSession.stopRunning()
         } else {
             DispatchQueue.main.async {
-                videoSession.startRunning()
+                self.videoSession.startRunning()
             }
         }
     }
 
     private func syncVideoSizeAndOrientation() {
         guard
-            let videoSession = videoSession,
+            videoSession.isSupported,
             let previewLayer = videoSession.previewLayer
         else {
             return

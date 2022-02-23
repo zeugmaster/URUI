@@ -32,15 +32,14 @@ public struct URScanProgress {
 }
 
 /// Tracks and reports state of ongoing capture.
+@MainActor
 public final class URScanState: ObservableObject {
     public let resultPublisher = PassthroughSubject<URScanResult, Never>()
-
-    let codesPublisher = CodesPublisher()
 
     private var urDecoder: URDecoder!
     private var bag = Set<AnyCancellable>()
 
-    public init() {
+    public init(codesPublisher: URCodesPublisher) {
         codesPublisher
             .receive(on: DispatchQueue.main)
             .sink { completion in

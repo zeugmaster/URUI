@@ -1,5 +1,5 @@
 //
-//  VideoSession.swift
+//  URVideoSession.swift
 //
 //  Copyright © 2020 by Blockchain Commons, LLC
 //  Licensed under the "BSD-2-Clause Plus Patent License"
@@ -9,30 +9,32 @@ import Foundation
 import AVFoundation
 import Combine
 
-struct VideoSessionError: LocalizedError {
+public struct URVideoSessionError: LocalizedError {
     let description: String
 
     init(_ description: String) {
         self.description = description
     }
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         return description
     }
 }
 
-final class VideoSession: ObservableObject {
+public final class URVideoSession: ObservableObject {
+    let isSupported: Bool
+    let codesPublisher: URCodesPublisher
+
     @Published public private(set) var captureDevices: [AVCaptureDevice] = []
     @Published public private(set) var currentCaptureDevice: AVCaptureDevice?
 
     private(set) var captureSession: AVCaptureSession!
     private(set) var previewLayer: AVCaptureVideoPreviewLayer?
     private var discoverySession: AVCaptureDevice.DiscoverySession!
-    private let codesPublisher: CodesPublisher
     private var metadataObjectsDelegate: MetadataObjectsDelegate!
-    let queue = DispatchQueue(label: "codes", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "codes", qos: .userInteractive)
     
-    func setCaptureDevice(_ newDevice: AVCaptureDevice) {
+    public func setCaptureDevice(_ newDevice: AVCaptureDevice) {
         do {
             captureSession.beginConfiguration()
             if let currentInput = captureSession.inputs.first {
@@ -48,19 +50,22 @@ final class VideoSession: ObservableObject {
         }
     }
 
-    init?(codesPublisher: CodesPublisher) {
+    public init(codesPublisher: URCodesPublisher) {
         #if targetEnvironment(simulator)
-        return nil
+        isSupported = false
+        return
         #else
 
-        self.codesPublisher = codesPublisher
+        isSupported = true
 
+        self.codesPublisher = codesPublisher
+        
         do {
             discoverySession = .init(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
             captureDevices = discoverySession.devices
 
             guard let currentCaptureDevice = AVCaptureDevice.default(for: .video) else {
-                throw VideoSessionError("Could not open video capture device.")
+                throw URVideoSessionError("Could not open video capture device.")
             }
             
             self.currentCaptureDevice = currentCaptureDevice
@@ -68,7 +73,7 @@ final class VideoSession: ObservableObject {
             let videoInput = try AVCaptureDeviceInput(device: currentCaptureDevice)
             captureSession = AVCaptureSession()
             guard captureSession.canAddInput(videoInput) else {
-                throw VideoSessionError("Could not add video input device.")
+                throw URVideoSessionError("Could not add video input device.")
             }
             captureSession.addInput(videoInput)
 
@@ -76,7 +81,7 @@ final class VideoSession: ObservableObject {
 
             let metadataOutput = AVCaptureMetadataOutput()
             guard captureSession.canAddOutput(metadataOutput) else {
-                throw VideoSessionError("Could not add metadata output.")
+                throw URVideoSessionError("Could not add metadata output.")
             }
             captureSession.addOutput(metadataOutput)
 
@@ -112,10 +117,10 @@ final class VideoSession: ObservableObject {
 
     @objc
     class MetadataObjectsDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
-        let codesPublisher: CodesPublisher
+        let codesPublisher: URCodesPublisher
         var lastFound: Set<String> = []
 
-        init(codesPublisher: CodesPublisher) {
+        init(codesPublisher: URCodesPublisher) {
             self.codesPublisher = codesPublisher
         }
 
