@@ -8,6 +8,9 @@
 import Foundation
 import AVFoundation
 import Combine
+import os
+
+let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "URUI")
 
 public struct URVideoSessionError: LocalizedError {
     let description: String
@@ -46,19 +49,19 @@ public final class URVideoSession: ObservableObject {
             captureSession.commitConfiguration()
             currentCaptureDevice = newDevice
         } catch {
-            print(error.localizedDescription)
+            logger.error("⛔️ \(error.localizedDescription)")
         }
     }
 
     public init(codesPublisher: URCodesPublisher) {
+        self.codesPublisher = codesPublisher
+
         #if targetEnvironment(simulator)
         isSupported = false
         return
         #else
 
         isSupported = true
-
-        self.codesPublisher = codesPublisher
         
         do {
             discoverySession = .init(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
@@ -91,7 +94,7 @@ public final class URVideoSession: ObservableObject {
             previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
             previewLayer!.videoGravity = .resizeAspectFill
         } catch {
-            print("🛑 \(error)")
+            logger.error("⛔️ \(error.localizedDescription)")
             codesPublisher.send(completion: .failure(error))
         }
         #endif
