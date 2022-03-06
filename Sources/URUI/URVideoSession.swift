@@ -39,6 +39,10 @@ public final class URVideoSession: ObservableObject {
     
     public func setCaptureDevice(_ newDevice: AVCaptureDevice) {
         do {
+            guard let captureSession = captureSession else {
+                return
+            }
+
             captureSession.beginConfiguration()
             if let currentInput = captureSession.inputs.first {
                 captureSession.removeInput(currentInput)
@@ -95,7 +99,6 @@ public final class URVideoSession: ObservableObject {
             previewLayer!.videoGravity = .resizeAspectFill
         } catch {
             logger.error("⛔️ \(error.localizedDescription)")
-            codesPublisher.send(completion: .failure(error))
         }
         #endif
     }
