@@ -1,12 +1,12 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.6
 
 import PackageDescription
 
 let package = Package(
     name: "URUI",
     platforms: [
-        .macOS(.v11),
-        .iOS(.v14)
+        .macOS(.v12),
+        .iOS(.v15)
     ],
     products: [
         .library(
@@ -14,7 +14,7 @@ let package = Package(
             targets: ["URUI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/BlockchainCommons/URKit.git", from: "3.0.0"),
+        .package(url: "https://github.com/BlockchainCommons/URKit.git", from: "7.0.0"),
     ],
     targets: [
         .target(

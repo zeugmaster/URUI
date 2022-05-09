@@ -1,25 +1,23 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "URKit",
-        "repositoryURL": "https://github.com/BlockchainCommons/URKit.git",
-        "state": {
-          "branch": null,
-          "revision": "c125790d29d1c94a32966ed59a80f8eb3efad226",
-          "version": "3.0.0"
-        }
-      },
-      {
-        "package": "WolfBase",
-        "repositoryURL": "https://github.com/wolfmcnally/WolfBase",
-        "state": {
-          "branch": null,
-          "revision": "e2d31011f52152590ec587f09c067c3b9fb064a3",
-          "version": "2.4.1"
-        }
+  "pins" : [
+    {
+      "identity" : "urkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BlockchainCommons/URKit.git",
+      "state" : {
+        "revision" : "0c48811b55ffb641172d40e17facf2a3fcef6694",
+        "version" : "7.0.2"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "wolfbase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wolfmcnally/WolfBase",
+      "state" : {
+        "revision" : "81a1ddeb4e21dadc34ed23faed3b61e475eb4fab",
+        "version" : "4.0.0"
+      }
+    }
+  ],
+  "version" : 2
 }
