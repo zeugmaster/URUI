@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BlockchainCommons/URKit.git",
       "state" : {
-        "revision" : "0c48811b55ffb641172d40e17facf2a3fcef6694",
-        "version" : "7.0.2"
+        "revision" : "1b36dc6c6dbf2b851e02e008eaea85b68b102ecc",
+        "version" : "7.4.2"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wolfmcnally/WolfBase",
       "state" : {
-        "revision" : "81a1ddeb4e21dadc34ed23faed3b61e475eb4fab",
-        "version" : "4.0.0"
+        "revision" : "098eaa6bb1d28fd01c36cd6030bee4e4209c4ca3",
+        "version" : "4.5.1"
       }
     }
   ],
