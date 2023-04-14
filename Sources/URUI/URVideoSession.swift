@@ -106,7 +106,9 @@ public final class URVideoSession: ObservableObject {
     func startRunning() {
         guard let captureSession = captureSession else { return }
         if !captureSession.isRunning {
-            captureSession.startRunning()
+            Task {
+                captureSession.startRunning()
+            }
         }
     }
 

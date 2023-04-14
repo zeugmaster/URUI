@@ -42,9 +42,7 @@ public class URUIVideoView: UIView {
         if superview == nil {
             videoSession.stopRunning()
         } else {
-            DispatchQueue.main.async {
-                self.videoSession.startRunning()
-            }
+            videoSession.startRunning()
         }
     }
 
