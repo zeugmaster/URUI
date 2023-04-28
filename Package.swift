@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "URUI",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15)
+        .iOS(.v15),
+        .macCatalyst(.v14),
     ],
     products: [
         .library(
