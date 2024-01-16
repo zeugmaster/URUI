@@ -63,11 +63,11 @@ public final class URScanState: ObservableObject {
     
     private var progress: URScanProgress {
         let estimatedPercentComplete = urDecoder.estimatedPercentComplete
-        let fragmentStates: [URFragmentBar.FragmentState] = (0 ..< urDecoder.expectedPartCount).map { i in
-            if urDecoder.receivedPartIndexes.contains(i) {
+        let fragmentStates: [URFragmentBar.FragmentState] = (0 ..< urDecoder.expectedFragmentCount!).map { i in
+            if urDecoder.receivedFragmentIndexes.contains(i) {
                 return .highlighted
             } else {
-                return urDecoder.lastPartIndexes.contains(i) ? .on : .off
+                return urDecoder.lastFragmentIndexes.contains(i) ? .on : .off
             }
         }
         return URScanProgress(estimatedPercentComplete: estimatedPercentComplete, fragmentStates: fragmentStates)

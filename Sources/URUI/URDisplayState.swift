@@ -27,7 +27,7 @@ public class URDisplayState: ObservableObject {
 
     private static let defaultInterval: TimeInterval = 1.0 / 10
     private var encoder: UREncoder!
-    private var lastPartIndexes: Set<Int> { encoder.lastPartIndexes }
+    private var lastFragmentIndexes: Set<Int> { encoder.lastFragmentIndexes }
     private let timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     private var timerCanceler: AnyCancellable?
     private var lastSwitch: Date!
@@ -63,7 +63,7 @@ public class URDisplayState: ObservableObject {
     private func nextPart() {
         part = encoder.nextQRPart()
         fragmentStates = (0 ..< seqLen).map { i in
-            encoder.lastPartIndexes.contains(i) ? .on : .off
+            encoder.lastFragmentIndexes.contains(i) ? .on : .off
         }
     }
 }
