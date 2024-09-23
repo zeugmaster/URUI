@@ -24,7 +24,7 @@ public struct URProgressBar: View {
 
                 Rectangle().frame(width: min(CGFloat(self.value)*geometry.size.width, geometry.size.width), height: geometry.size.height)
                     .foregroundColor(Color(UIColor.systemBlue))
-                    .animation(.linear)
+                    .animation(.linear, value: value)
             }
             .cornerRadius(45.0)
         }

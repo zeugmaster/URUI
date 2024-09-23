@@ -12,7 +12,7 @@ import os
 
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "URUI")
 
-public struct URVideoSessionError: LocalizedError {
+public struct URVideoSessionError: LocalizedError, Sendable {
     let description: String
 
     init(_ description: String) {
@@ -24,6 +24,7 @@ public struct URVideoSessionError: LocalizedError {
     }
 }
 
+@MainActor
 public final class URVideoSession: ObservableObject {
     let isSupported: Bool
     let codesPublisher: URCodesPublisher
