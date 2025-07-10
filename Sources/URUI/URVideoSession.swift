@@ -123,6 +123,12 @@ public final class URVideoSession: ObservableObject {
     var isRunning: Bool {
         captureSession?.isRunning ?? false
     }
+    
+    /// Resets the scanning state, allowing the same QR code to be scanned again.
+    /// Call this after scanning a static QR code to enable rescanning.
+    public func resetScanningState() {
+        metadataObjectsDelegate?.clearLastFound()
+    }
 
     @objc
     class MetadataObjectsDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
@@ -141,6 +147,10 @@ public final class URVideoSession: ObservableObject {
                 lastFound = codes
                 codesPublisher.send(codes)
             }
+        }
+        
+        func clearLastFound() {
+            lastFound = []
         }
     }
 }
