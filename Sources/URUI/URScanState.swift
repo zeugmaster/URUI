@@ -88,6 +88,7 @@ public final class URScanState: ObservableObject {
         } else {
             if urDecoder.expectedType == nil {
                 resultPublisher.send(.other(code))
+                restart()
             } else {
                 resultPublisher.send(.reject)
             }
