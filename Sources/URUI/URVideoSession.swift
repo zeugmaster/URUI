@@ -107,7 +107,7 @@ public final class URVideoSession: ObservableObject {
     func startRunning() {
         guard let captureSession = captureSession else { return }
         if !captureSession.isRunning {
-            Task {
+            queue.async {
                 captureSession.startRunning()
             }
         }
@@ -116,7 +116,9 @@ public final class URVideoSession: ObservableObject {
     func stopRunning() {
         guard let captureSession = captureSession else { return }
         if captureSession.isRunning {
-            captureSession.stopRunning()
+            queue.async {
+                captureSession.stopRunning()
+            }
         }
     }
 
